@@ -1,0 +1,94 @@
+var trigger = slash_command(Args{
+	command_name:        "V2-Embed",
+	command_description: "Create a V2 embed ",
+	command_options: `[
+	{
+		"id": "5z4654x4rq6x",
+		"name": "channel",
+		"description": "Channel name ",
+		"type": 7,
+		"required": true,
+		"channel_types": [
+			0,
+			5,
+			13,
+			16,
+			15,
+			4,
+			2
+		]
+	},
+	{
+		"id": "9g4i31qx07ju",
+		"name": "text",
+		"description": "The text you wanna have as description",
+		"type": 3,
+		"required": true
+	},
+	{
+		"id": "qcavduc0d2pr",
+		"name": "message",
+		"description": "The text above the embed (Optional) ",
+		"type": 3,
+		"required": true
+	},
+	{
+		"id": "l8ra4m7huvzf",
+		"name": "image",
+		"description": "URL for the image. ",
+		"type": 3,
+		"required": true
+	},
+	{
+		"id": "nor4go0txpux",
+		"name": "hex-code",
+		"description": "Color of embed ( ex:- #0000) ",
+		"type": 3,
+		"required": true
+	}
+]`,
+	command_integration_types: "Server Installable",
+})
+
+func main() {
+	guildMember := get_discord_guild_member(Args{server_id: "1409889811896078368", user_id: trigger.user_id})
+	//flow:collapsed if_true
+	if contains(guildMember.member_role_ids, "1484246309450813652") || contains(guildMember.member_role_ids, "1484246312542011492") {
+		//flow:collapsed message_components
+		send_advanced_message(Args{
+			channel_id:     trigger.channel_id,
+			allow_mentions: "Roles,Users",
+			message_components: func() {
+				advmsgcmp_content_text(Args{content: trigger.opt_qcavduc0d2pr})
+				advmsgcmp_layout_container(Args{
+					children: func() {
+						advmsgcmp_content_text(Args{content: trigger.opt_9g4i31qx07ju})
+						advmsgcmp_layout_separator(Args{divider: "true", spacing: "small"})
+						advmsgcmp_layout_gallery(Args{
+							children: func() {
+								advmsgcmp_media_image(Args{
+									url:         trigger.opt_l8ra4m7huvzf,
+									description: "Image",
+									spoiler:     "false",
+								})
+							},
+						})
+						advmsgcmp_layout_separator(Args{divider: "true", spacing: "small"})
+						advmsgcmp_content_text(Args{content: "> Powered by **Botsy Studios**"})
+					},
+					accent_color: trigger.opt_nor4go0txpux,
+					spoiler:      "false",
+				})
+			},
+		})
+		respond_interaction_text(Args{
+			message_content: "The V2 embed has been sent successfully",
+			ephemeral:       "true",
+		})
+	} else {
+		respond_interaction_text(Args{
+			message_content: "! You do not have permission to use this command",
+			ephemeral:       "true",
+		})
+	}
+}
