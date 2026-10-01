@@ -30,6 +30,19 @@ async def hello(ctx):
     await ctx.send(f"Hello, {ctx.author.mention}!")
 
 
+@bot.command()
+async def embed(ctx, title="Embed Title", description="Embed Description"):
+    """Send a formatted embed message"""
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=discord.Color.blue()
+    )
+    embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url)
+    embed.set_footer(text="Embed sent by Discord Bot")
+    await ctx.send(embed=embed)
+
+
 @bot.event
 async def on_message(message):
     if message.author.bot:
